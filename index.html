@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
     <div class="chat-container">
@@ -15,6 +15,13 @@
           <img src="https://img.freepik.com/vetores-premium/chatbot-rede-neural-ai-servidores-e-tecnologia-de-robos-cute-chatbot-ai-personagem_651808-563.jpg?semt=ais_hybrid&w=740">
       </figure>
         <div id="controles">
+            <div class="control-group">
+                <label for="serverSelect">Conectar ao Servidor:</label>
+                <select id="serverSelect">
+                    <option value="local">Local (Porta 5001)</option>
+                    <option value="production">Produção (Render)</option>
+                </select>
+            </div>
             <button id="iniciarBtn">Iniciar conversa</button>
             <button id="limparBtn">Limpar tela</button>
             <button id="encerrarBtn">Encerrar conversa</button>
@@ -23,7 +30,7 @@
 
     <div class="chat-container">
         <header class="chat-header">
-            <h1>Chatbot Amigável</h1>
+            <h1>Fitbot</h1>
             <div id="connection-status" class="status-offline">Conectando...</div>
         </header>
         <div id="chat-box" class="chat-box">
@@ -36,7 +43,7 @@
 
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="script.js"></script>
+    <script src="script.js?v=2"></script>
 </body>
 </html>
   

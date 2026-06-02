@@ -1,6 +1,23 @@
-const URL_BACKEND = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:')
-    ? 'http://localhost:5001'
-    : 'https://chatbot-gemini-81dj.onrender.com';
+function getBackendURL() {
+    const hostname = window.location.hostname;
+    const protocol = window.location.protocol;
+    
+    // Verifica se estamos rodando em ambiente local (localhost, arquivo local ou rede local)
+    const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
+    const isLocalFile = protocol === 'file:';
+    const isLocalIP = /^192\.168\./.test(hostname) || 
+                      /^10\./.test(hostname) || 
+                      /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(hostname) ||
+                      /^127\./.test(hostname);
+
+    if (isLocalhost || isLocalFile || isLocalIP) {
+        return 'http://localhost:5001';
+    }
+    
+    return 'https://chatbot-gemini-81dj.onrender.com';
+}
+
+const URL_BACKEND = getBackendURL();
 
 document.addEventListener('DOMContentLoaded', () => {
     let socket = null;
@@ -12,6 +29,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const iniciarBtn = document.getElementById('iniciarBtn');
     const encerrarBtn = document.getElementById('encerrarBtn');
     const limparBtn = document.getElementById('limparBtn');
+    const serverSelect = document.getElementById('serverSelect');
+
+    // Define a seleção padrão com base no ambiente autodetectado
+    if (serverSelect) {
+        serverSelect.value = URL_BACKEND === 'http://localhost:5001' ? 'local' : 'production';
+    }
 
     let userSessionId = null;
 
@@ -74,16 +97,18 @@ document.addEventListener('DOMContentLoaded', () => {
     function iniciarConversa() {
         if (socket && socket.connected) return;
 
-        addMessageToChat('Status', `Tentando conectar a ${URL_BACKEND}...`, 'status');
+        const targetURL = serverSelect ? (serverSelect.value === 'local' ? 'http://localhost:5001' : 'https://chatbot-gemini-81dj.onrender.com') : URL_BACKEND;
 
-        socket = io(URL_BACKEND, {
+        addMessageToChat('Status', `Tentando conectar a ${targetURL}...`, 'status');
+
+        socket = io(targetURL, {
             transports: ["websocket", "polling"],
             timeout: 5000 // limite de tempo para conexão
         });
 
         socket.on("connect_error", (err) => {
             console.error("Erro de conexão:", err);
-            addMessageToChat('Erro', `Não foi possível conectar ao servidor em ${URL_BACKEND}. Certifique-se de que o servidor Flask (app.py) está rodando e acessível.`, 'error');
+            addMessageToChat('Erro', `Não foi possível conectar ao servidor em ${targetURL}. Certifique-se de que o servidor Flask (app.py) está rodando e acessível.`, 'error');
             connectionStatus.textContent = 'Erro de Conexão';
             connectionStatus.className = 'status-offline';
             setChatEnabled(false);
