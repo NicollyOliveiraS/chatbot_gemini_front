@@ -103,7 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         socket = io(targetURL, {
             transports: ["websocket", "polling"],
-            timeout: 5000 // limite de tempo para conexão
+            timeout: 30000, // 30s para dar tempo ao Render acordar (cold start)
+            reconnectionAttempts: 5,
+            reconnectionDelay: 2000
         });
 
         socket.on("connect_error", (err) => {
