@@ -13,7 +13,7 @@
     <div class="app-container">
         <aside class="sidebar">
             <div class="brand-image-container">
-                <img src="/img/lateral.jfif" alt="Halteres de Musculação" class="brand-image">
+                <img src="/img/lateral.jfif" alt="Halteres GreenFit" class="brand-image">
             </div>
             
             <div id="controles">
@@ -37,11 +37,10 @@
                 <div class="bot-info">
                     <img src="/img/logo-removebg-preview.png" alt="GreenFit Logo" class="bot-avatar">
                     <div class="bot-text-wrapper">
-                        
                         <span class="bot-subtitle">Assistente Virtual</span>
                     </div>
                 </div>
-                <div id="connection-status" class="status-online">Conectado</div>
+                <div id="connection-status" class="status-offline">Desconectado</div>
             </header>
             
             <div id="chat-box" class="chat-box">
@@ -51,8 +50,8 @@
             </div>
             
             <footer class="chat-input-area">
-                <input type="text" id="message-input" placeholder="Digite sua mensagem aqui...">
-                <button id="send-button">
+                <input type="text" id="message-input" placeholder="Digite sua mensagem aqui..." disabled>
+                <button id="send-button" disabled>
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
                         <path d="M1.946 9.315c-.522-.174-.527-.455.01-.634l20.53-6.844c.526-.175.864.124.713.656l-6.858 20.566c-.18.541-.475.535-.644-.018l-3.385-11.047L1.946 9.315zM12.93 11.07l2.843 9.284 5.253-15.759-15.748 5.249 9.285 2.822 1.367-1.366z"/>
                     </svg>

@@ -13,7 +13,7 @@ function getBackendURL() {
         return 'http://localhost:5001';
     }
     
-    return 'https://chatbot-gemini-81dj.onrender.com';
+    return 'https://chatbot-gemini-1-ja4k.onrender.com';
 }
 
 const URL_BACKEND = getBackendURL();
@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const messageElement = document.createElement('div');
         messageElement.classList.add('message');
 
+        // Mapeamento rígido das classes para garantir o visual de balões reais
         if (sender.toLowerCase() === 'user') {
             messageWrapper.classList.add('user-row');
             messageElement.classList.add('user-message');
@@ -53,11 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (type === 'error') messageElement.classList.add('error-text');
-        if (type === 'status') messageElement.classList.add('status-text');
 
         const textSpan = document.createElement('div');
         textSpan.classList.add('message-content');
         
+        // Renderiza com marked se for mensagem convencional (User/Bot) para aceitar Markdown
         if (type === 'normal') {
             textSpan.innerHTML = marked.parse(text);
         } else {
@@ -68,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         messageWrapper.appendChild(messageElement);
         chatBox.appendChild(messageWrapper);
         
+        // Scroll suave ajustado para o final da caixa
         chatBox.scrollTo({
             top: chatBox.scrollHeight,
             behavior: 'smooth'
@@ -77,11 +79,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function setChatEnabled(enabled) {
         messageInput.disabled = !enabled;
         sendButton.disabled = !enabled;
+        if (enabled) messageInput.focus();
     }
 
+    // Estado Inicial do Sistema
     setChatEnabled(false);
     connectionStatus.textContent = 'Desconectado';
     connectionStatus.className = 'status-offline';
+    chatBox.innerHTML = ''; // Garante tela limpa antes de iniciar
     addMessageToChat('Status', 'Clique em "Iniciar conversa" para começar.', 'status');
 
     function iniciarConversa() {
@@ -121,11 +126,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         socket.on('nova_mensagem', (data) => {
-            addMessageToChat(data.remetente, data.texto);
+            if (data && data.texto) {
+                addMessageToChat(data.remetente || 'bot', data.texto);
+            }
         });
 
         socket.on('erro', (data) => {
-            addMessageToChat('Erro', data.erro, 'error');
+            addMessageToChat('Erro', data.erro || 'Ocorreu um erro desconhecido.', 'error');
         });
     }
 
