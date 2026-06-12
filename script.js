@@ -2,7 +2,6 @@ function getBackendURL() {
     const hostname = window.location.hostname;
     const protocol = window.location.protocol;
     
-    // Verifica se estamos rodando em ambiente local (localhost, arquivo local ou rede local)
     const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
     const isLocalFile = protocol === 'file:';
     const isLocalIP = /^192\.168\./.test(hostname) || 
@@ -31,69 +30,60 @@ document.addEventListener('DOMContentLoaded', () => {
     const limparBtn = document.getElementById('limparBtn');
     const serverSelect = document.getElementById('serverSelect');
 
-    // Define a seleção padrão com base no ambiente autodetectado
     if (serverSelect) {
         serverSelect.value = URL_BACKEND === 'http://localhost:5001' ? 'local' : 'production';
     }
 
-    let userSessionId = null;
-
-    // Função para adicionar mensagens no chat
     function addMessageToChat(sender, text, type = 'normal') {
+        const messageWrapper = document.createElement('div');
+        messageWrapper.classList.add('message-row');
+
         const messageElement = document.createElement('div');
         messageElement.classList.add('message');
 
         if (sender.toLowerCase() === 'user') {
+            messageWrapper.classList.add('user-row');
             messageElement.classList.add('user-message');
-            sender = 'Você';
         } else if (sender.toLowerCase() === 'bot') {
+            messageWrapper.classList.add('bot-row');
             messageElement.classList.add('bot-message');
-            sender = 'Bot';
         } else {
+            messageWrapper.classList.add('status-row');
             messageElement.classList.add('status-message');
         }
 
-        if (type === 'error') {
-            messageElement.classList.add('error-text');
-            sender = 'Erro';
-        } else if (type === 'status') {
-            messageElement.classList.add('status-text');
-            sender = 'Status';
-        }
+        if (type === 'error') messageElement.classList.add('error-text');
+        if (type === 'status') messageElement.classList.add('status-text');
 
-        const senderSpan = document.createElement('strong');
-        senderSpan.textContent = `${sender}: `;
-        messageElement.appendChild(senderSpan);
-
-        const textSpan = document.createElement('span');
+        const textSpan = document.createElement('div');
+        textSpan.classList.add('message-content');
         
-        // Se for uma mensagem normal (bot ou usuário), renderiza o Markdown
         if (type === 'normal') {
             textSpan.innerHTML = marked.parse(text);
         } else {
-            // Se for erro ou status, mantém como texto puro
             textSpan.textContent = text;
         }
         
         messageElement.appendChild(textSpan);
-
-        chatBox.appendChild(messageElement);
-        chatBox.scrollTop = chatBox.scrollHeight;
+        messageWrapper.appendChild(messageElement);
+        chatBox.appendChild(messageWrapper);
+        
+        chatBox.scrollTo({
+            top: chatBox.scrollHeight,
+            behavior: 'smooth'
+        });
     }
 
-    // Função para habilitar/desabilitar o chat
     function setChatEnabled(enabled) {
         messageInput.disabled = !enabled;
         sendButton.disabled = !enabled;
     }
 
-    // Inicialmente desativa o chat
     setChatEnabled(false);
     connectionStatus.textContent = 'Desconectado';
     connectionStatus.className = 'status-offline';
     addMessageToChat('Status', 'Clique em "Iniciar conversa" para começar.', 'status');
 
-    // Função para conectar ao servidor
     function iniciarConversa() {
         if (socket && socket.connected) return;
 
@@ -103,21 +93,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         socket = io(targetURL, {
             transports: ["websocket", "polling"],
-            timeout: 30000, // 30s para dar tempo ao Render acordar (cold start)
+            timeout: 30000,
             reconnectionAttempts: 5,
             reconnectionDelay: 2000
         });
 
         socket.on("connect_error", (err) => {
             console.error("Erro de conexão:", err);
-            addMessageToChat('Erro', `Não foi possível conectar ao servidor em ${targetURL}. Certifique-se de que o servidor Flask (app.py) está rodando e acessível.`, 'error');
+            addMessageToChat('Erro', `Não foi possível conectar ao servidor. Certifique-se de que o backend está rodando.`, 'error');
             connectionStatus.textContent = 'Erro de Conexão';
             connectionStatus.className = 'status-offline';
             setChatEnabled(false);
         });
 
         socket.on('connect', () => {
-            console.log('Conectado ao servidor Socket.IO! SID:', socket.id);
             connectionStatus.textContent = 'Conectado';
             connectionStatus.className = 'status-online';
             addMessageToChat('Status', 'Conectado ao servidor de chat com sucesso!', 'status');
@@ -125,17 +114,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         socket.on('disconnect', () => {
-            console.log('Desconectado do servidor Socket.IO.');
             connectionStatus.textContent = 'Desconectado';
             connectionStatus.className = 'status-offline';
             addMessageToChat('Status', 'Você foi desconectado do servidor.', 'status');
             setChatEnabled(false);
-        });
-
-        socket.on('status_conexao', (data) => {
-            if (data.session_id) {
-                userSessionId = data.session_id;
-            }
         });
 
         socket.on('nova_mensagem', (data) => {
@@ -147,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Função para encerrar a conversa
     function encerrarConversa() {
         if (socket && socket.connected) {
             socket.disconnect();
@@ -156,13 +137,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Função para limpar as mensagens da tela
     function limparTela() {
-        chatBox.innerHTML = ''; // Isso apaga todo o HTML de dentro da caixa de chat
+        chatBox.innerHTML = ''; 
         addMessageToChat('Status', 'Tela limpa.', 'status');
     }
 
-    // Enviar mensagem para o servidor
     function sendMessageToServer() {
         const messageText = messageInput.value.trim();
         if (messageText === '') return;
@@ -177,7 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Eventos dos botões
     iniciarBtn.addEventListener('click', iniciarConversa);
     encerrarBtn.addEventListener('click', encerrarConversa);
     limparBtn.addEventListener('click', limparTela);
@@ -189,4 +167,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-
