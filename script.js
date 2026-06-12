@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function iniciarConversa() {
         if (socket && socket.connected) return;
 
-        const targetURL = serverSelect ? (serverSelect.value === 'local' ? 'http://localhost:5001' : 'https://chatbot-gemini-81dj.onrender.com') : URL_BACKEND;
+        const targetURL = serverSelect ? (serverSelect.value === 'local' ? 'http://localhost:5001' : 'https://chatbot-gemini-1-ja4k.onrender.com') : URL_BACKEND;
 
         addMessageToChat('Status', `Tentando conectar a ${targetURL}...`, 'status');
 
