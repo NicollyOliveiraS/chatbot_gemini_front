@@ -332,3 +332,114 @@ body {
   .chat-box { padding: 20px; }
   .message { max-width: 85%; }
 }
+/* --- CONFIGURAÇÃO DE RESPONSIVIDADE (ATUALIZADO) --- */
+
+@media (max-width: 900px) {
+  body {
+    padding: 0;
+    overflow: auto; /* Permite rolagem da página se necessário em telas muito pequenas */
+    align-items: stretch;
+  }
+
+  .app-container {
+    flex-direction: column;
+    height: 100vh; /* Ocupa a tela inteira do dispositivo */
+    height: 100dvh; /* Suporte para navegadores mobile modernos (evita que a barra do navegador cubra o input) */
+    border-radius: 0; /* Remove as bordas arredondadas nas laterais da tela */
+    border: none;
+  }
+
+  /* Painel Lateral (Sidebar) no Mobile */
+  .sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 16px;
+    gap: 12px;
+  }
+
+  /* Esconde a imagem no mobile para poupar espaço vertical pro chat */
+  .brand-image-container {
+    display: none;
+  }
+
+  /* Ajuste dos controles em formato de grid fluído */
+  #controles {
+    margin-top: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .control-group {
+    grid-column: span 2; /* O select ocupa a largura total do topo */
+    margin-bottom: 0;
+  }
+
+  .btn {
+    padding: 12px;
+    font-size: 0.88rem;
+  }
+
+  #iniciarBtn {
+    grid-column: span 2; /* Destaca o botão de iniciar ocupando as duas colunas */
+  }
+
+  /* Área Principal do Chat */
+  .chat-wrapper {
+    height: 100%; /* Ocupa o restante do espaço vertical disponível */
+    overflow: hidden;
+  }
+
+  .chat-header {
+    padding: 12px 16px;
+  }
+
+  .bot-avatar {
+    width: 50px; /* Diminui a logo no topo para ganhar espaço */
+    height: 50px;
+  }
+
+  .bot-title {
+    font-size: 1rem;
+  }
+
+  /* Caixa de Mensagens */
+  .chat-box {
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .message {
+    max-width: 85%; /* Balões ligeiramente mais largos em telas pequenas */
+    font-size: 0.92rem;
+    padding: 10px 14px;
+  }
+
+  /* Área de Input Fixa no Rodapé */
+  .chat-input-area {
+    padding: 14px 16px;
+    gap: 10px;
+    background: #080e0b; /* Garante opacidade total para não sobrepor texto ao fundo */
+  }
+
+  #message-input {
+    padding: 12px 16px;
+    font-size: 0.92rem;
+  }
+
+  #send-button {
+    padding: 0 16px;
+  }
+
+  /* Esconde o texto "Enviar" no botão se a tela for muito pequena (mantém apenas o ícone SVG) */
+  @media (max-width: 400px) {
+    #send-button span {
+      display: none;
+    }
+    #send-button {
+      padding: 0 14px;
+    }
+  }
+}
